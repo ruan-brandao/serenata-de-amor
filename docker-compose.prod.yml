@@ -1,7 +1,12 @@
-version: '3'
+version: "3.4"
+x-logging: &default-logging
+  driver: fluentd
+  options:
+    fluentd-address: 0.0.0.0:24224
 services:
 
   proxy:
+    <<: *default
     image: jwilder/nginx-proxy
     container_name: proxy
     ports:
@@ -21,6 +26,7 @@ services:
       - proxy-public:/usr/share/nginx/html
 
   proxy-certs:
+    <<: *default
     image: jrcs/letsencrypt-nginx-proxy-companion
     networks:
       - backend
@@ -66,11 +72,13 @@ services:
       - assets:/code/jarbas/layers/static
 
   memcached:
+    <<: *default
     image: memcached:1.5.1-alpine
     networks:
       - backend
 
   nginx:
+    <<: *default
     image: datasciencebr/jarbas-server
     networks:
       - backend
