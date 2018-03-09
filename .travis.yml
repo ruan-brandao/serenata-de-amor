@@ -9,6 +9,7 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
 install:
+  - cp contrib/.env.sample .env
   - docker-compose pull
   - docker-compose build
 before_script:
