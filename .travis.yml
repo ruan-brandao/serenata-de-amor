@@ -1,32 +1,21 @@
-sudo: false
-dist: trusty
-
-language: python
-python: 3.6
-cache: pip
-
-addons:
-  postgresql: "9.6"
-
-services:
-  - postgresql
-
+sudo: required
 env:
-  - DATABASE_URL="postgres://postgres@localhost/jarbas"
-
+  - DOCKER_COMPOSE_VERSION=1.19.0
+services:
+  - docker
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
 install:
-  - python -m pip install -U pip
-  - psql -U postgres -c 'create database "jarbas";'
-  - python -m pip install -r requirements-dev.txt coveralls
-  - ./rosie/setup
-
+  - docker-compose pull
+  - docker-compose build
 before_script:
   - python manage.py migrate
   - python manage.py collectstatic --no-input
-
 script:
-  - coverage run manage.py test
-  - cd rosie && coverage run rosie.py test && python rosie.py run federal_senate
-
+  - docker-compose run django coverage run manage.py test
+  # - cd rosie && coverage run rosie.py test && python rosie.py run federal_senate"
 after_success:
   - coveralls
