@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'jarbas.dashboard',
     'django.contrib.admin',
     'django_extensions',
-    'debug_toolbar',
 ]
 
 
@@ -64,11 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
-
-if not DEBUG:
-	MIDDLEWARE.insert(2, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'jarbas.urls'
 
@@ -199,3 +194,16 @@ CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@loca
 # Set home
 
 HOMES_REDIRECTS_TO = '/dashboard/chamber_of_deputies/reimbursement/'
+
+if DEBUG:
+    MIDDLEWARE = [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ] + MIDDLEWARE
+    INSTALLED_APPS += [
+        'debug_toolbar',
+    ]
+    DEBUG_TOOLBAR_CONFIG = {
+        'SHOW_TOOLBAR_CALLBACK': lambda _: True,
+    }
+else:
+    MIDDLEWARE.insert(2, 'whitenoise.middleware.WhiteNoiseMiddleware')
