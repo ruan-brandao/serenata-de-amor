@@ -1,6 +1,0 @@
-*.pyc
-.coverage
-.env
-.python-version
-__pycache__/
-htmlcov/
