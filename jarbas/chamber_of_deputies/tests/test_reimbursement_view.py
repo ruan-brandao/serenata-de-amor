@@ -112,15 +112,36 @@ class TestRetrieveApi(TestCase):
 
     def test_contents_with_tweet(self):
         status = random_tweet_status()
+        print('\n\n--x--x-- status --x--x--\n\n')
+        print(status)
+        print('\n\n')
+
         mixer.blend(Tweet, reimbursement=self.reimbursement, status=status)
+        print('\n\n--x--x-- tweet --x--x--\n\n')
+        print(Tweet.objects.last())
+        print('\n\n')
+
         expected = self.sample_response.copy()
+        print('\n\n--x--x-- expected --x--x--\n\n')
+        print(expected)
+        print('\n\n')
+
         expected['rosies_tweet'] = self.reimbursement.tweet.get_url()
+        print('\n\n--x--x-- expected + tweet --x--x--\n\n')
+        print(expected['rosies_tweet'])
+        print('\n\n')
+
         url = resolve_url(
             'chamber_of_deputies:reimbursement-detail',
             document_id=self.reimbursement.document_id
         )
         resp = self.client.get(url)
+
         contents = loads(resp.content.decode('utf-8'))
+        print('\n\n--x--x-- result --x--x--\n\n')
+        print(contents)
+        print('\n\n')
+
         self.assertTrue(contents['rosies_tweet'].endswith(str(status)), f'{status} not found')
         self.assertEqual(expected, contents)
 
